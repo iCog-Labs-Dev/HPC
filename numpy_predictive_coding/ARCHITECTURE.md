@@ -27,7 +27,7 @@ $$
 \begin{aligned}
 Z_\ell &= W_\ell A_{\ell-1} + b_\ell \quad (\ell=1,2,3), \\
 A_1 &= \sigma(Z_1), \qquad A_2 = \sigma(Z_2), \qquad
-A_3 = \operatorname{softmax}(Z_3).
+A_3 = \mathrm{softmax}(Z_3).
 \end{aligned}
 $$
 
@@ -37,7 +37,7 @@ each sample column. For a logit vector $z$, the implementation computes it
 with $c=\max_k z_k$ for numerical stability.
 
 $$
-\operatorname{softmax}(z)_i = \frac{\exp(z_i-c)}{\sum_k \exp(z_k-c)}.
+\mathrm{softmax}(z)_i = \frac{\exp(z_i-c)}{\sum_k \exp(z_k-c)}.
 $$
 
 ## Weight and hidden-state initialization
@@ -69,7 +69,7 @@ $$
 \begin{aligned}
 \mu_1 &= \sigma(W_1 X + b_1), & e_1 &= H_1 - \mu_1, \\
 \mu_2 &= \sigma(W_2 H_1 + b_2), & e_2 &= H_2 - \mu_2, \\
-\widetilde Z_3 &= W_3 H_2 + b_3, & p &= \operatorname{softmax}(\widetilde Z_3), \\
+\widetilde Z_3 &= W_3 H_2 + b_3, & p &= \mathrm{softmax}(\widetilde Z_3), \\
 \delta_3 &= p - Y.
 \end{aligned}
 $$
@@ -177,7 +177,7 @@ For $N$ examples, the reported metrics are
 $$
 \begin{aligned}
 \mathrm{CE} &= -\frac{1}{N}\sum_{j=1}^{N}\sum_{k=1}^{10}
-Y_{kj}\log\left(\operatorname{clip}(A_{3,kj},10^{-7},1)\right), \\
+Y_{kj}\log\left(\mathrm{clip}(A_{3,kj},10^{-7},1)\right), \\
 \mathrm{Accuracy} &= \frac{1}{N}\sum_{j=1}^{N}
 \mathbf{1}\!\left[\widehat y_j = \arg\max_k Y_{kj}\right].
 \end{aligned}
