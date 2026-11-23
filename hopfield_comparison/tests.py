@@ -231,7 +231,7 @@ def test_comparison_runner_shares_memories_queries_and_update_seeds(capsys):
     ):
         for model in (classical, storkey, modern):
             model.return_value.recall.side_effect = lambda query: query.copy()
-        compare.main()
+        compare.compare_binary()
 
     lines = capsys.readouterr().out.splitlines()
     assert lines[1] == "patterns | classical | storkey | modern"
@@ -250,3 +250,12 @@ def test_comparison_runner_shares_memories_queries_and_update_seeds(capsys):
         assert modern.return_value.recall.call_args_list[index].args[0] is query
         assert seed.call_args_list[2 * index] == seed.call_args_list[2 * index + 1]
     assert seed.call_count == 2 * len(counts)
+
+
+def test_continuous_comparison_distinguishes_binary_outputs_and_rejection(capsys):
+    compare.compare_continuous(pattern_counts=(5,), trials=3)
+
+    lines = capsys.readouterr().out.strip().splitlines()
+    assert [value.strip() for value in lines[2].split('|')] == [
+        '5', '0.00', 'N/A', '1.00',
+    ]

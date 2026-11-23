@@ -6,7 +6,7 @@ A NumPy project comparing three associative-memory approaches: classical Hopfiel
 
 A Hopfield network is a **content-addressable memory**: you provide a noisy version of a stored pattern, and the network attempts to recover the original. You retrieve by similarity to the content rather than by supplying a memory address.
 
-In this project, each stored pattern is a vector of `n` values, each either `-1` or `+1`. Noise is introduced by flipping selected signs. For example:
+In the binary experiment, each stored pattern is a vector of `n` values, each either `-1` or `+1`. Noise is introduced by flipping selected signs. For example:
 
 ```python
 original = np.array([ 1,  1, -1, -1])
@@ -213,7 +213,7 @@ Exponential retrieval capacity does not mean exponential compression into `n*n` 
 | `hopfield.py` | Classical Hebbian training, energy, asynchronous recall |
 | `storkey_hopfield.py` | Storkey training; inherits classical energy and recall |
 | `modern_hopfield.py` | Explicit memory storage, softmax, continuous recall and energy |
-| `compare.py` | Shared noisy-query experiment and success table |
+| `compare.py` | Binary and continuous-valued recall experiments |
 | `README.md` | Model definitions, capacity context, usage, and findings |
 
 Requires Python 3 and NumPy. Run inside the project folder:
@@ -223,7 +223,7 @@ python -m pip install numpy
 python compare.py
 ```
 
-There are no command-line arguments. Edit the settings at the top of `main()` in `compare.py`:
+The script runs both experiments. There are no command-line arguments. Edit the binary settings at the top of `compare_binary()` in `compare.py`:
 
 ```python
 n = 100
@@ -242,9 +242,9 @@ For a shorter run, temporarily change `pattern_counts` to `[5, 14, 50]` and `tri
 python compare.py
 ```
 
-The full list can take a long time, especially for sequential Storkey training at 100,000 and 1,000,000 patterns. The larger sizes also need more memory because the generated patterns and modern model's pattern copy coexist.
+The full list can take a long time, especially for sequential Storkey training at 10,000 patterns. The larger sizes also need more memory because the generated patterns and modern model's pattern copy coexist.
 
-## Experiment design
+## Binary experiment
 
 For each pattern count, the script repeats these steps:
 
@@ -257,6 +257,18 @@ For each pattern count, the script repeats these steps:
 7. Count success only when **every output bit** matches the target.
 
 Each table entry is successful trials divided by total trials. The benchmark samples one target per fresh network; it does not test all memories or measure basin sizes.
+
+## Continuous-valued experiment
+
+`compare_continuous()` draws memories uniformly from `[-1, 1]` and adds independent Gaussian noise with a standard deviation of `0.2` to each coordinate of a randomly chosen memory. Each model receives the original floating-point memories and, if training succeeds, the same noisy query. A trial succeeds when every recalled coordinate is within `0.001` of the target. The score uses the raw output.
+
+Classical Hebbian training accepts the memories, but recall outputs only `-1` and `+1`. Storkey requires binary memories at training time, so its result is `N/A`. Modern Hopfield stores the floating-point memories and can recover their original magnitudes. The defaults use 100 coordinates, 20 trials per pattern count, and a seed of 0. To run just this experiment from the project folder, use:
+
+```bash
+python -c 'from compare import compare_continuous; compare_continuous()'
+```
+
+At each of the default pattern counts (5, 50, and 500), modern Hopfield recovered 20 of 20 targets and classical Hopfield recovered 0 of 20. Storkey rejected the memories in every trial.
 
 ## Observed findings
 
