@@ -3,6 +3,9 @@
 A reusable extraction of `mnist_pc_simple.ipynb`. The original notebook remains
 unchanged as a reference. Training and tests run directly from Python.
 
+See [Network architecture and mathematical foundations](ARCHITECTURE.md) for
+layer dimensions, initialization, inference and learning equations, and evaluation.
+
 ## Setup
 
 Python 3.10 or newer is required. NumPy is the only runtime dependency; pytest
